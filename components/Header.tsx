@@ -7,6 +7,7 @@ interface HeaderProps {
   onLogout: () => void;
   onRegenerateAvatar: () => void;
   onOpenSavedBills: () => void;
+  onOpenVideoGenerator: () => void;
   savedBillsCount: number;
   logoUrl: string | null;
   isGeneratingLogo: boolean;
@@ -17,7 +18,8 @@ const Header: React.FC<HeaderProps> = ({
   onLoginClick, 
   onLogout, 
   onRegenerateAvatar, 
-  onOpenSavedBills, 
+  onOpenSavedBills,
+  onOpenVideoGenerator,
   savedBillsCount,
   logoUrl,
   isGeneratingLogo 
@@ -42,6 +44,13 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center space-x-4">
           {currentUser ? (
             <div className="flex items-center space-x-4">
+               <button 
+                  onClick={onOpenVideoGenerator} 
+                  className="text-gray-500 hover:text-blue-500 transition-colors" 
+                  title="Animate an image"
+                >
+                <i className="fa-solid fa-film text-2xl"></i>
+              </button>
                <button 
                   onClick={onOpenSavedBills} 
                   className="relative text-gray-500 hover:text-blue-500 transition-colors" 

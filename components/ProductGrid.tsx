@@ -6,10 +6,11 @@ interface ProductGridProps {
   products: Product[];
   onAddProduct: (product: Product) => void;
   onUpdatePrice: (productId: number, newPrice: number) => void;
+  onOpenImageEditor: (product: Product) => void;
   currentUser: User | null;
 }
 
-const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddProduct, onUpdatePrice, currentUser }) => {
+const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddProduct, onUpdatePrice, onOpenImageEditor, currentUser }) => {
   return (
     <div className="bg-white border border-gray-200 p-4 rounded-lg flex-grow overflow-y-auto shadow-inner" style={{maxHeight: 'calc(100vh - 210px)'}}>
       {products.length === 0 ? (
@@ -24,8 +25,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddProduct, onUpd
               className={`border border-gray-200 rounded-lg flex flex-col text-center transition-all group bg-white overflow-hidden ${!product.isGeneratingImage ? 'hover:shadow-lg hover:border-blue-400 transform hover:-translate-y-1' : ''}`}
             >
               <div
-                 className="relative h-32 bg-gray-100 cursor-pointer"
-                 onClick={() => !product.isGeneratingImage && onAddProduct(product)}
+                 className="relative h-32 bg-gray-100"
               >
                 {product.isGeneratingImage ? (
                    <div className="w-full h-full flex items-center justify-center bg-gray-200">
@@ -39,9 +39,21 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onAddProduct, onUpd
                   </div>
                 )}
                 {!product.isGeneratingImage && (
-                  <div className="absolute inset-0 bg-blue-500 bg-opacity-75 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div 
+                    className="absolute inset-0 bg-blue-500 bg-opacity-75 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                    onClick={() => onAddProduct(product)}
+                  >
                     <span className="text-white font-bold text-lg">Add to Bill</span>
                   </div>
+                )}
+                {currentUser && !product.isGeneratingImage && product.imageUrl && (
+                    <button
+                        onClick={() => onOpenImageEditor(product)}
+                        className="absolute top-2 right-2 bg-white bg-opacity-80 text-gray-700 hover:bg-opacity-100 hover:text-blue-500 rounded-full w-8 h-8 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+                        title="Edit Image with AI"
+                    >
+                        <i className="fa-solid fa-wand-magic-sparkles"></i>
+                    </button>
                 )}
               </div>
 

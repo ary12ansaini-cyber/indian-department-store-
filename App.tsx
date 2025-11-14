@@ -7,6 +7,8 @@ import LoginModal from './components/LoginModal';
 import { GoogleGenAI, Modality, Type } from '@google/genai';
 import CategoryFilter from './components/CategoryFilter';
 import SavedBillsModal from './components/SavedBillsModal';
+import ImageEditorModal from './components/ImageEditorModal';
+import VideoGeneratorModal from './components/VideoGeneratorModal';
 
 const INITIAL_PRODUCTS: Product[] = [
   { id: 1, name: 'Parle-G Biscuit', price: 10, category: 'Groceries' },
@@ -44,6 +46,9 @@ const App: React.FC = () => {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [isGeneratingLogo, setIsGeneratingLogo] = useState(false);
   const [isInstallationFeeApplied, setIsInstallationFeeApplied] = useState(false);
+  const [isImageEditorOpen, setIsImageEditorOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState<Product | null>(null);
+  const [isVideoGeneratorOpen, setIsVideoGeneratorOpen] = useState(false);
 
 
   // Load saved bills from localStorage on initial render
@@ -280,6 +285,15 @@ const App: React.FC = () => {
     );
   };
 
+  const handleUpdateProductImage = (productId: number, newImageUrl: string) => {
+    setProducts(prevProducts =>
+      prevProducts.map(p =>
+        p.id === productId ? { ...p, imageUrl: newImageUrl } : p
+      )
+    );
+  };
+
+
   const handleRemoveItem = (productId: number) => {
     setBillItems(prevItems => prevItems.filter(item => item.id !== productId));
   };
@@ -342,6 +356,12 @@ const App: React.FC = () => {
       generateAvatar(currentUser.name);
     }
   };
+  
+  const handleOpenImageEditor = (product: Product) => {
+    setProductToEdit(product);
+    setIsImageEditorOpen(true);
+  };
+
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
@@ -354,6 +374,7 @@ const App: React.FC = () => {
         onRegenerateAvatar={handleRegenerateAvatar}
         onOpenSavedBills={() => setIsSavedBillsModalOpen(true)}
         savedBillsCount={savedBills.length}
+        onOpenVideoGenerator={() => setIsVideoGeneratorOpen(true)}
       />
       <main className="flex flex-col lg:flex-row p-4 gap-4 max-w-screen-2xl mx-auto">
         <div className="lg:w-3/5 xl:w-2/3 flex flex-col">
@@ -376,6 +397,7 @@ const App: React.FC = () => {
             products={filteredProducts} 
             onAddProduct={handleAddProduct}
             onUpdatePrice={handleUpdateProductPrice}
+            onOpenImageEditor={handleOpenImageEditor}
             currentUser={currentUser}
           />
         </div>
@@ -411,6 +433,18 @@ const App: React.FC = () => {
           onLoadBill={handleLoadBill}
           onDeleteBill={handleDeleteBill}
           onClose={() => setIsSavedBillsModalOpen(false)}
+        />
+      )}
+      {isImageEditorOpen && productToEdit && (
+        <ImageEditorModal
+          product={productToEdit}
+          onClose={() => setIsImageEditorOpen(false)}
+          onSaveImage={handleUpdateProductImage}
+        />
+      )}
+      {isVideoGeneratorOpen && (
+        <VideoGeneratorModal
+          onClose={() => setIsVideoGeneratorOpen(false)}
         />
       )}
     </div>
