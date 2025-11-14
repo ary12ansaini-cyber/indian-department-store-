@@ -1,0 +1,5 @@
+{
+  "name": "Indian Department Store Billing System",
+  "description": "A modern, responsive billing system for a typical Indian department store. It allows cashiers to easily add products, adjust quantities, and calculate the final bill including GST.",
+  "requestFramePermissions": []
+}
