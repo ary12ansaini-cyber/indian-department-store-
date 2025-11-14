@@ -40,6 +40,9 @@ const App: React.FC = () => {
   const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
   const [savedBills, setSavedBills] = useState<SavedBill[]>([]);
   const [isSavedBillsModalOpen, setIsSavedBillsModalOpen] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [isGeneratingLogo, setIsGeneratingLogo] = useState(false);
+
 
   // Load saved bills from localStorage on initial render
   useEffect(() => {
@@ -51,6 +54,39 @@ const App: React.FC = () => {
     } catch (error) {
       console.error("Failed to load bills from localStorage:", error);
     }
+  }, []);
+
+  // AI Logo Generation
+  useEffect(() => {
+    const generateLogo = async () => {
+        setIsGeneratingLogo(true);
+        try {
+            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+            const response = await ai.models.generateContent({
+                model: 'gemini-2.5-flash-image',
+                contents: {
+                    parts: [{ text: "A modern, minimalist logo for 'Indian Department Store'. The logo should be abstract, using only black and white. It should be clean, professional, and elegant, on a dark grey background matching #111827." }],
+                },
+                config: {
+                    responseModalities: [Modality.IMAGE],
+                },
+            });
+
+            for (const part of response.candidates[0].content.parts) {
+                if (part.inlineData) {
+                    const base64ImageBytes: string = part.inlineData.data;
+                    const imageUrl = `data:image/png;base64,${base64ImageBytes}`;
+                    setLogoUrl(imageUrl);
+                    break;
+                }
+            }
+        } catch (error) {
+            console.error("Logo generation failed:", error);
+        } finally {
+            setIsGeneratingLogo(false);
+        }
+    };
+    generateLogo();
   }, []);
 
   // AI Avatar Generation
@@ -287,6 +323,8 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 font-sans">
       <Header 
+        logoUrl={logoUrl}
+        isGeneratingLogo={isGeneratingLogo}
         currentUser={currentUser}
         onLoginClick={() => setIsLoginModalOpen(true)}
         onLogout={handleLogout}

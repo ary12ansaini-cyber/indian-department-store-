@@ -8,14 +8,33 @@ interface HeaderProps {
   onRegenerateAvatar: () => void;
   onOpenSavedBills: () => void;
   savedBillsCount: number;
+  logoUrl: string | null;
+  isGeneratingLogo: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ currentUser, onLoginClick, onLogout, onRegenerateAvatar, onOpenSavedBills, savedBillsCount }) => {
+const Header: React.FC<HeaderProps> = ({ 
+  currentUser, 
+  onLoginClick, 
+  onLogout, 
+  onRegenerateAvatar, 
+  onOpenSavedBills, 
+  savedBillsCount,
+  logoUrl,
+  isGeneratingLogo 
+}) => {
   return (
     <header className="bg-gray-800 border-b border-gray-700">
       <div className="max-w-screen-2xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <i className="fa-solid fa-store text-3xl text-white"></i>
+          {isGeneratingLogo ? (
+            <div className="w-10 h-10 flex items-center justify-center">
+              <i className="fa-solid fa-spinner fa-spin text-2xl text-white"></i>
+            </div>
+          ) : logoUrl ? (
+            <img src={logoUrl} alt="Store Logo" className="w-10 h-10 rounded-md object-cover" />
+          ) : (
+            <i className="fa-solid fa-store text-3xl text-white"></i>
+          )}
           <h1 className="text-2xl font-bold text-white tracking-tight">
             Indian Department Store
           </h1>
