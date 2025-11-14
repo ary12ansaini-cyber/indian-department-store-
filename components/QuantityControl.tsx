@@ -49,7 +49,7 @@ const QuantityControl: React.FC<QuantityControlProps> = ({ quantity, onIncrease,
     <div className="flex items-center">
       <button 
         onClick={onDecrease} 
-        className="w-7 h-7 bg-gray-600 rounded-l-md text-gray-200 hover:bg-gray-500 transition-colors"
+        className="w-7 h-7 bg-gray-200 rounded-l-md text-gray-600 hover:bg-gray-300 transition-colors"
         aria-label="Decrease quantity"
       >
         <i className="fa-solid fa-minus text-xs"></i>
@@ -62,13 +62,13 @@ const QuantityControl: React.FC<QuantityControlProps> = ({ quantity, onIncrease,
           onChange={(e) => setInputValue(e.target.value)}
           onBlur={handleCommit}
           onKeyDown={handleKeyDown}
-          className="w-10 h-7 text-center font-semibold bg-gray-800 border-y border-white text-white focus:outline-none"
+          className="w-10 h-7 text-center font-semibold bg-white border-y border-blue-500 text-gray-800 focus:outline-none ring-1 ring-blue-500"
           autoFocus
         />
       ) : (
         <button 
           onClick={() => setIsEditing(true)}
-          className="w-10 h-7 text-center font-semibold bg-transparent border-t border-b border-gray-600 text-white flex items-center justify-center cursor-text"
+          className="w-10 h-7 text-center font-semibold bg-white border-t border-b border-gray-200 text-gray-800 flex items-center justify-center cursor-text"
           aria-label={`Current quantity: ${quantity}. Click to edit.`}
         >
           {quantity}
@@ -76,7 +76,7 @@ const QuantityControl: React.FC<QuantityControlProps> = ({ quantity, onIncrease,
       )}
       <button 
         onClick={onIncrease} 
-        className="w-7 h-7 bg-gray-600 rounded-r-md text-gray-200 hover:bg-gray-500 transition-colors"
+        className="w-7 h-7 bg-gray-200 rounded-r-md text-gray-600 hover:bg-gray-300 transition-colors"
         aria-label="Increase quantity"
       >
         <i className="fa-solid fa-plus text-xs"></i>

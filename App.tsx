@@ -67,7 +67,7 @@ const App: React.FC = () => {
             const response = await ai.models.generateContent({
                 model: 'gemini-2.5-flash-image',
                 contents: {
-                    parts: [{ text: "A modern, minimalist logo for 'Indian Department Store'. The logo should be abstract, using only black and white. It should be clean, professional, and elegant, on a dark grey background matching #111827." }],
+                    parts: [{ text: "A modern, minimalist logo for 'Indian Department Store'. The logo should be an abstract, colorful symbol representing variety and shopping. It should be clean, professional, and friendly on a white background." }],
                 },
                 config: {
                     responseModalities: [Modality.IMAGE],
@@ -99,7 +99,7 @@ const App: React.FC = () => {
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image',
         contents: {
-          parts: [{ text: `Generate a unique, abstract, minimalist professional avatar for a cashier named '${name}'. Use a vibrant, friendly color palette with a clean, dark-grey background. The avatar should be modern and geometric, not a realistic portrait.` }],
+          parts: [{ text: `Generate a unique, abstract, minimalist professional avatar for a cashier named '${name}'. Use a vibrant, friendly color palette with a clean, light-grey background. The avatar should be modern and geometric, not a realistic portrait.` }],
         },
         config: {
           responseModalities: [Modality.IMAGE],
@@ -137,7 +137,7 @@ const App: React.FC = () => {
           try {
             const response = await ai.models.generateContent({
               model: 'gemini-2.5-flash-image',
-              contents: { parts: [{ text: `A professional, clean product photograph of ${product.name}, on a dark background.` }] },
+              contents: { parts: [{ text: `A professional, clean product photograph of ${product.name}, on a light grey background.` }] },
               config: { responseModalities: [Modality.IMAGE] },
             });
             for (const part of response.candidates[0].content.parts) {
@@ -267,6 +267,19 @@ const App: React.FC = () => {
     }
   };
 
+  const handleUpdateProductPrice = (productId: number, newPrice: number) => {
+    setProducts(prevProducts => 
+      prevProducts.map(p => 
+        p.id === productId ? { ...p, price: newPrice } : p
+      )
+    );
+    setBillItems(prevBillItems => 
+      prevBillItems.map(item => 
+        item.id === productId ? { ...item, price: newPrice } : item
+      )
+    );
+  };
+
   const handleRemoveItem = (productId: number) => {
     setBillItems(prevItems => prevItems.filter(item => item.id !== productId));
   };
@@ -331,7 +344,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 font-sans">
+    <div className="min-h-screen bg-gray-50 font-sans">
       <Header 
         logoUrl={logoUrl}
         isGeneratingLogo={isGeneratingLogo}
@@ -350,7 +363,7 @@ const App: React.FC = () => {
               placeholder="Search for products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-3 pl-10 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-white focus:outline-none text-white"
+              className="w-full p-3 pl-10 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-900 shadow-sm"
             />
             <i className="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
           </div>
@@ -359,7 +372,12 @@ const App: React.FC = () => {
             selectedCategory={selectedCategory}
             onSelectCategory={setSelectedCategory}
           />
-          <ProductGrid products={filteredProducts} onAddProduct={handleAddProduct} />
+          <ProductGrid 
+            products={filteredProducts} 
+            onAddProduct={handleAddProduct}
+            onUpdatePrice={handleUpdateProductPrice}
+            currentUser={currentUser}
+          />
         </div>
         <div className="lg:w-2/5 xl:w-1/3">
           <BillingSection
