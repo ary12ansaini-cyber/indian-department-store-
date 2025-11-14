@@ -24,4 +24,5 @@ export interface SavedBill {
   subtotal: number;
   gstAmount: number;
   total: number;
+  isInstallationFeeApplied?: boolean;
 }

@@ -54,7 +54,13 @@ const SavedBillsModal: React.FC<SavedBillsModalProps> = ({ bills, onLoadBill, on
                       Bill from {formatDate(bill.date)}
                     </p>
                     <p className="text-sm text-gray-300">
-                      {bill.items.length} item(s) - Total: <span className="font-bold">₹{bill.total.toFixed(2)}</span>
+                      {bill.items.length} item(s)
+                      {bill.isInstallationFeeApplied && (
+                        <span className="ml-2 text-xs bg-gray-600 text-gray-200 px-2 py-0.5 rounded-full">
+                          + Fee
+                        </span>
+                      )}
+                      {' - '}Total: <span className="font-bold">₹{bill.total.toFixed(2)}</span>
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">

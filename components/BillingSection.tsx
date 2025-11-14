@@ -15,6 +15,10 @@ interface BillingSectionProps {
   aiSuggestions: Product[];
   isFetchingSuggestions: boolean;
   onAddProduct: (product: Product) => void;
+  isInstallationFeeApplied: boolean;
+  onToggleInstallationFee: () => void;
+  installationFee: number;
+  INSTALLATION_FEE_AMOUNT: number;
 }
 
 const BillingSection: React.FC<BillingSectionProps> = ({
@@ -28,8 +32,14 @@ const BillingSection: React.FC<BillingSectionProps> = ({
   total,
   aiSuggestions,
   isFetchingSuggestions,
-  onAddProduct
+  onAddProduct,
+  isInstallationFeeApplied,
+  onToggleInstallationFee,
+  installationFee,
+  INSTALLATION_FEE_AMOUNT,
 }) => {
+  const isBillEmpty = items.length === 0 && !isInstallationFeeApplied;
+
   return (
     <div className="bg-gray-800 rounded-lg border border-gray-700 h-full flex flex-col">
       <div className="p-4 border-b border-gray-700">
@@ -73,18 +83,38 @@ const BillingSection: React.FC<BillingSectionProps> = ({
         )}
       </div>
 
-      <div className="p-4 border-t border-gray-700 mt-auto space-y-2">
-        <div className="flex justify-between text-gray-400">
-          <span>Subtotal</span>
-          <span className="font-medium">₹{subtotal.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between text-gray-400">
-          <span>GST (18%)</span>
-          <span className="font-medium">₹{gstAmount.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between text-2xl font-bold text-white border-t border-gray-700 pt-2 mt-2">
-          <span>Total</span>
-          <span>₹{total.toFixed(2)}</span>
+      <div className="p-4 border-t border-gray-700 mt-auto space-y-3">
+        <button 
+          onClick={onToggleInstallationFee}
+          className={`w-full py-2 px-3 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center border ${
+              isInstallationFeeApplied 
+              ? 'bg-red-900/50 text-red-400 hover:bg-red-800/50 border-red-700' 
+              : 'bg-gray-700 text-gray-200 hover:bg-gray-600 border-gray-600'
+          }`}
+        >
+            <i className={`fa-solid ${isInstallationFeeApplied ? 'fa-toggle-on text-xl' : 'fa-toggle-off text-xl'} mr-3`}></i>
+            {isInstallationFeeApplied ? 'Installation Fee Added' : 'Add Installation Fee'} (₹{INSTALLATION_FEE_AMOUNT.toFixed(2)})
+        </button>
+
+        <div className="space-y-2 pt-3 border-t border-gray-700">
+            <div className="flex justify-between text-gray-400">
+              <span>Subtotal</span>
+              <span className="font-medium">₹{subtotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-gray-400">
+              <span>GST (18%)</span>
+              <span className="font-medium">₹{gstAmount.toFixed(2)}</span>
+            </div>
+            {isInstallationFeeApplied && (
+              <div className="flex justify-between text-gray-300">
+                <span>Installation Fee</span>
+                <span className="font-medium">₹{installationFee.toFixed(2)}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-2xl font-bold text-white border-t border-gray-600 pt-2 mt-2">
+              <span>Total</span>
+              <span>₹{total.toFixed(2)}</span>
+            </div>
         </div>
       </div>
       
@@ -97,14 +127,14 @@ const BillingSection: React.FC<BillingSectionProps> = ({
         </button>
         <button 
           onClick={onSaveBill}
-          disabled={items.length === 0}
+          disabled={isBillEmpty}
           className="w-full bg-gray-600 text-gray-100 font-semibold py-3 rounded-lg hover:bg-gray-500 transition-colors disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed"
         >
           Save Bill
         </button>
         <button 
           onClick={() => window.print()}
-          disabled={items.length === 0}
+          disabled={isBillEmpty}
           className="w-full bg-white text-gray-900 font-semibold py-3 rounded-lg hover:bg-gray-200 transition-colors disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed"
         >
           Print Bill

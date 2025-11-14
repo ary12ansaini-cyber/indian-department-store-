@@ -26,6 +26,7 @@ const INITIAL_PRODUCTS: Product[] = [
 ];
 
 const GST_RATE = 0.18; // 18% GST
+const INSTALLATION_FEE = 150; // Fixed installation fee
 const SAVED_BILLS_KEY = 'retailBillingApp-savedBills';
 
 
@@ -42,6 +43,7 @@ const App: React.FC = () => {
   const [isSavedBillsModalOpen, setIsSavedBillsModalOpen] = useState(false);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [isGeneratingLogo, setIsGeneratingLogo] = useState(false);
+  const [isInstallationFeeApplied, setIsInstallationFeeApplied] = useState(false);
 
 
   // Load saved bills from localStorage on initial render
@@ -233,12 +235,13 @@ const App: React.FC = () => {
     );
   }, [products, searchTerm, selectedCategory]);
 
-  const { subtotal, gstAmount, total } = useMemo(() => {
+  const { subtotal, gstAmount, installationFee, total } = useMemo(() => {
     const subtotal = billItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const gstAmount = subtotal * GST_RATE;
-    const total = subtotal + gstAmount;
-    return { subtotal, gstAmount, total };
-  }, [billItems]);
+    const installationFee = isInstallationFeeApplied ? INSTALLATION_FEE : 0;
+    const total = subtotal + gstAmount + installationFee;
+    return { subtotal, gstAmount, installationFee, total };
+  }, [billItems, isInstallationFeeApplied]);
 
   const handleAddProduct = (product: Product) => {
     setBillItems(prevItems => {
@@ -271,10 +274,15 @@ const App: React.FC = () => {
   const handleClearBill = () => {
     setBillItems([]);
     setAiSuggestions([]);
+    setIsInstallationFeeApplied(false);
+  };
+  
+  const handleToggleInstallationFee = () => {
+    setIsInstallationFeeApplied(prev => !prev);
   };
 
   const handleSaveBill = () => {
-    if (billItems.length === 0) return;
+    if (billItems.length === 0 && !isInstallationFeeApplied) return;
     const newSavedBill: SavedBill = {
       id: Date.now(),
       date: new Date().toISOString(),
@@ -282,6 +290,7 @@ const App: React.FC = () => {
       subtotal,
       gstAmount,
       total,
+      isInstallationFeeApplied,
     };
     const updatedSavedBills = [newSavedBill, ...savedBills];
     setSavedBills(updatedSavedBills);
@@ -293,6 +302,7 @@ const App: React.FC = () => {
     const billToLoad = savedBills.find(bill => bill.id === billId);
     if (billToLoad) {
       setBillItems(billToLoad.items);
+      setIsInstallationFeeApplied(billToLoad.isInstallationFeeApplied || false);
       setIsSavedBillsModalOpen(false);
     }
   };
@@ -360,6 +370,10 @@ const App: React.FC = () => {
             onSaveBill={handleSaveBill}
             subtotal={subtotal}
             gstAmount={gstAmount}
+            installationFee={installationFee}
+            INSTALLATION_FEE_AMOUNT={INSTALLATION_FEE}
+            isInstallationFeeApplied={isInstallationFeeApplied}
+            onToggleInstallationFee={handleToggleInstallationFee}
             total={total}
             aiSuggestions={aiSuggestions}
             isFetchingSuggestions={isFetchingSuggestions}
